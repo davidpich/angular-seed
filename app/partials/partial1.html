@@ -1,1 +1,24 @@
-<p>This is the partial for view 1.</p>
+<div class="row">
+        <form>
+                <fieldset>
+                        <legend ng-controller="TranslateTextCtrl" ng-show="(devices|filter:newFilter|filter:searchFilter).length > 0">{{(devices|filter:newFilter|filter:searchFilter).length}} {{'products'|translate}}</legend>
+                        <input  type="text" ng-model="searchFilter.$" placeholder="{{'Search for something...'|translate}}">
+                </fieldset>
+        </form>
+</div>
+
+
+    <div class="row">
+                <div class="small-6 large-2 columns product-block" ng-repeat="device in devices | filter:newFilter | filter:searchFilter" ng-model="devices">
+                        <a href="{{device.linkBuy}}" target="_blank"><img ng-src="{{device.image}}" class="thumbnail"/></a>
+                        <ul class="no-bullet">
+                                <li class="product-price">
+                                        <span class="product-price">{{device.price}}</span>
+                                        <span ng-hide="!device.savings" class="product-savings">{{device.savings}}</span>
+                                </li>
+                                <li><p><span class="product-info">{{device.descrip}}</span></p></li>
+                        </ul>
+                </div>
+</div>
+
+

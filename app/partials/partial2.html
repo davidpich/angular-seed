@@ -1,5 +1,6 @@
-<p>This is the partial for view 2.</p>
-<p>
-  Showing of 'interpolate' filter:
-  {{ 'Current version is v%VERSION%.' | interpolate }}
-</p>
+<ul class="small-block-grid-2 medium-block-grid-3 large-block-grid-4 padding-20">
+    <li ng-repeat="device in devices">
+      <img ng-src="{{device.image}}" />
+        <span class="[success alert secondary] [round radius] label">{{device.price}}</span>
+    </li>
+ </ul>

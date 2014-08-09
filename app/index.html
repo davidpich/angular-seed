@@ -8,35 +8,97 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>My AngularJS App</title>
   <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="bower_components/html5-boilerplate/css/normalize.css">
-  <link rel="stylesheet" href="bower_components/html5-boilerplate/css/main.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no. minimal-ui">
+   <!-- Foundation CSS -->
+  <link rel="stylesheet" href="vendor/foundation/css/normalize.css" />
+  <link rel="stylesheet" href="vendor/foundation/css/foundation.css" />
+  <link rel="stylesheet" type="text/css" href="http://cloud.github.com/downloads/lafeber/world-flags-sprite/flags16.css" />
+  <link rel="stylesheet" type="text/css" href="vendor/ngprogress/ngProgress.css" />
+
+
   <link rel="stylesheet" href="css/app.css"/>
-  <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
-<body>
-  <ul class="menu">
-    <li><a href="#/view1">view1</a></li>
-    <li><a href="#/view2">view2</a></li>
-  </ul>
+<body ng-controller="AppCtrl">
+
+  <div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap">
+    <nav class="tab-bar">
+      <section class="left-small">
+        <a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+      </section>
+
+      <section class="middle tab-bar-section">
+        <h1 class="title">Refurbishy</h1>
+      </section>
+
+      <section class="right-small">
+        <a class="right-off-canvas-toggle menu-icon" href="#"><span></span></a>
+      </section>
+    </nav>
+
+    <aside class="left-off-canvas-menu" ng-controller="LeftMenuCtrl">
+      <ul class="off-canvas-list">
+          <li><label>Filter by</label></li>
+          <li><a href="#" ng-click="onSelectItem('')">SEE ALL</a></li>
+          <li ng-repeat="device in devices | filter:searchFilter | unique:'label'" ng-model="devices"><a href="#" ng-click="onSelectItem(device.label)">{{device.label}}</a></li>
+      </ul>
+    </aside>
+
+    <aside class="right-off-canvas-menu">
+      <ul class="off-canvas-list">
+        <li><label>Select Apple Store</label></li>
+        <li><a ng-click="getDevices($event,'de')"><flag country="de" size="16"></flag> Germany</a></li>
+        <li><a ng-click="getDevices($event,'es')"><flag country="es" size="16"></flag> Spain</a></li>
+        <li><a ng-click="getDevices($event,'fr')"><flag country="fr" size="16"></flag> France</a></li>
+        <li><a ng-click="getDevices($event,'us')"><flag country="us" size="16"></flag> United States</a></li>
+      </ul>
+    </aside>
+
+
+    <!-- MAIN SECTION -->
+    <section class="main-section">
+
+<!--         <nav class="breadcrumbs">
+        <a ui-sref="main">view1</a>
+        </nav> -->
+        <div ui-view></div>
+
+    </section>
+
+  <a class="exit-off-canvas"></a>
+
+  </div>
+</div>
 
   <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
 
-  <div ng-view></div>
 
-  <div>Angular seed app: v<span app-version></span></div>
 
-  <!-- In production use:
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
-  -->
-  <script src="bower_components/angular/angular.js"></script>
-  <script src="bower_components/angular-route/angular-route.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/services.js"></script>
-  <script src="js/controllers.js"></script>
-  <script src="js/filters.js"></script>
-  <script src="js/directives.js"></script>
+  <!-- Foundation JS dependencies -->
+  <script src="vendor/foundation/js/vendor/jquery.js"></script>
+  <script src="vendor/foundation/js/vendor/modernizr.js"></script>
+  <script src="vendor/foundation/js/foundation.min.js"></script>
+
+  <!-- Other JS plugins can be included here -->
+  <script src="vendor/foundation/js/foundation/foundation.offcanvas.js"></script>
+
+
+
+  <!-- Angular JS dependencies -->
+  <script src="vendor/angular/angular.js"></script>
+  <script src="vendor/angular-gettext/dist/angular-gettext.min.js"></script>
+  <script src="vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="vendor/angular-ui-utils/ui-utils.min.js"></script>
+  <script src="vendor/underscore/underscore.js"></script>
+  <script src="vendor/ng-flags/src/directives/ng-flags.js"></script>
+  <script src="vendor/ngprogress/build/ngProgress.min.js"></script>
+
+  <!-- Angular App JS-->
+  <script src="dist/js/dist.js"></script>
+
+  <script src="translate/translations.js"></script>
+  <script src="vendor/angular-google-analytics/src/angular-google-analytics.js"></script>
 </body>
 </html>
