@@ -2,7 +2,7 @@
  * Refurbishy web app
  * v0.0.1
  *
- * Copyright (c)2014 David Pich
+ * Copyright (c)2015 David Pich
  * Distributed under BSD-2-Clause license
  *
  * http://davidpich.com
@@ -14,16 +14,15 @@
 // Declare app level module which depends on filters, and services
 var myApp = angular.module('myApp', [
   'ui.router',
+  'ui.utils',
   'myApp.filters',
   'myApp.services',
   'myApp.directives',
   'myApp.controllers',
-  'ui.utils',
   'gettext',
-  'underscore',
-  'ngFlag',
-  'ngProgress',
-  'angular-google-analytics'
+  'angular-google-analytics',
+  'ngMaterial',
+  'ngMessages'
 ]).
 config(function($stateProvider, $urlRouterProvider, AnalyticsProvider) {
         //
@@ -38,6 +37,11 @@ config(function($stateProvider, $urlRouterProvider, AnalyticsProvider) {
                     templateUrl: "partials/partial1.html",
                     controller: "AppCtrl"
                 })
+                  .state('main.detail', {
+                    url: "/main/detail/:product",
+                    templateUrl: "partials/partial3.html",
+                    controller: "DetailProductCtrl"
+                  })
                 .state('grid', {
                     url: "/grid",
                     templateUrl: "partials/partial2.html",
@@ -45,41 +49,33 @@ config(function($stateProvider, $urlRouterProvider, AnalyticsProvider) {
                 });
          // initial configuration Google Analytics
     AnalyticsProvider.setAccount('UA-837977-23');
-
     // track all routes (or not)
     AnalyticsProvider.trackPages(true);
-
     // Use analytics.js instead of ga.js
-    AnalyticsProvider.useAnalytics(true);
-
-    // Ignore first page view... helpful when using hashes and whenever your bounce rate looks obscenely low.
-    AnalyticsProvider.ignoreFirstPageLoad(false);
-
-    //Enabled eCommerce module for analytics.js
-    AnalyticsProvider.useECommerce(false);
-
-    //Enable enhanced link attribution
-    AnalyticsProvider.useEnhancedLinkAttribution(true);
-
+    AnalyticsProvider.useAnalytics(false);
     // change page event name
     AnalyticsProvider.setPageEvent('$stateChangeSuccess');
+    AnalyticsProvider.ignoreFirstPageLoad(false);
+
 }).run(function($rootScope, gettextCatalog, Analytics) {
   $rootScope.lang = 'es';
   gettextCatalog.currentLanguage = 'en';
   gettextCatalog.debug = true;
     $rootScope.$on('$viewContentLoaded', function () {
-      $(document).foundation();
+      // $(document).foundation();
     });
   });
-
 
 'use strict';
 
 /* Controllers */
 
 angular.module('myApp.controllers', [])
- .controller('AppCtrl', function($rootScope, APIservice, state, ngProgress, Analytics) {
+ .controller('AppCtrl', function($rootScope, $scope, APIservice, state, Analytics,$mdSidenav,$mdDialog) {
         $rootScope.lang ='es';
+        $scope.selectedIndex = null;
+        $rootScope.languages = ['es','en','de','fr','ca'];
+
         APIservice.getDevices($rootScope.lang).success(function (response) {
                 $rootScope.devices = response;
         });
@@ -90,11 +86,53 @@ angular.module('myApp.controllers', [])
           $rootScope.devices = null;
            APIservice.getDevicesUrl(lang).success(function (response) {
                 $rootScope.devices = response;
+                $mdDialog.hide();
             });
-
         };
+        $scope.showAdvanced = function(ev) {
+          $mdDialog.show({
+            controller: DialogController,
+            templateUrl: 'partials/dialog.tmpl.html',
+            targetEvent: ev,
+          })
+          .then(function(answer) {
+            $mdDialog.hide();
+          }, function() {
+            $mdDialog.hide();
+          });
+        };
+        $scope.toggleMenu = function() {
+          $mdSidenav('left').toggle();
+        };
+        $scope.onSelectItem = function (item, index) {
+          Analytics.trackEvent('select category', item);
+          $scope.selectedIndex = index;
+          $scope.$parent.newFilter = item;
+        };
+        function DialogController($scope, $mdDialog) {
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+          $scope.answer = function(answer) {
+            $mdDialog.hide(answer);
+          };
+        }
+
+
   })
-  .controller('GridCtrl', function($scope) {
+  .controller('LeftSideCtrl', function($scope) {
+    $scope.close = function() {
+      $mdSidenav('left').close()
+      .then(function(){
+        $log.debug("close LEFT is done");
+      });
+    };
+  })
+
+  .controller('DetailProductCtrl', function($scope) {
 
   })
   .controller('TranslateTextCtrl', function($scope, gettextCatalog,Analytics) {
@@ -105,6 +143,10 @@ angular.module('myApp.controllers', [])
             $scope.$parent.newFilter = '';
             gettextCatalog.currentLanguage = $scope.lang;
         };
+        $scope.onSelectItem = function (item) {
+          Analytics.trackEvent('select category', item);
+          $scope.$parent.$parent.newFilter = item;
+        }
   })
   .controller('LeftMenuCtrl', function($scope,APIservice,Analytics) {
         $scope.onSelectItem = function (item) {
@@ -112,7 +154,6 @@ angular.module('myApp.controllers', [])
           $scope.$parent.newFilter = item;
         }
   });
-
 
 'use strict';
 
@@ -152,7 +193,7 @@ angular.module('myApp.filters', []).
 /* Services */
 
 angular.module('myApp.services', []).
-  service('APIservice', function($http, _, ngProgress) {
+  service('APIservice', function($http) {
     var _devicesCached = {};
     var refurbishyAPI = {};
     refurbishyAPI.getDevicesUrl = function(lang) {
@@ -162,35 +203,26 @@ angular.module('myApp.services', []).
         url: baseUrl,
         cache: false
       });
-      console.log('Load products from '+ baseUrl);
       this.setDevices ( lang, products );
       return products;
     }
 
     refurbishyAPI.setDevices = function( lang,devices ) {
       _devicesCached[lang] = devices;
-      ngProgress.stop();
-      console.log('set devices');
-      console.log(_devicesCached);
     }
 
     refurbishyAPI.getDevicesCached = function(lang) {
-      console.log('get products cached '+ _.keys(_devicesCached));
       return _devicesCached[lang];
     }
 
     refurbishyAPI.getDevices = function(lang) {
       if (_devicesCached[lang] === undefined){
-        console.log('get deviced not cached');
         var devices = this.getDevicesUrl(lang);
         return devices;
       }else{
-        console.log('get devices cached');
         return this.getDevicesCached(lang);
       }
     }
-
-    console.log(refurbishyAPI);
     return refurbishyAPI;
   }).factory('state', function () {
     'use strict';
@@ -206,10 +238,3 @@ angular.module('myApp.services', []).
 
     return state;
   });
-
-
-
-var underscore = angular.module('underscore', []);
-underscore.factory('_', function() {
-  return window._; // assumes underscore has already been loaded on the page
-});

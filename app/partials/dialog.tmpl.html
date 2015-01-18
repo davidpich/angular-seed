@@ -1,0 +1,8 @@
+<md-dialog aria-label="Select Store">
+  <md-content>
+    <h2>{{'select store'|translate}}</h2>
+    <md-button ng-repeat="language in languages" ng-model="languages" ng-disabled="lang == language" ng-click="getDevices($event,language)" class="md-button-colored">
+      {{language|translate}}
+    </md-button>
+  </md-content>
+</md-dialog>

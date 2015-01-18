@@ -6,70 +6,60 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>My AngularJS App</title>
+  <title>Refurbishy - Apple Refurbished products </title>
+   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
   <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no. minimal-ui">
+  <meta name="google-site-verification" content="z8rBQ0PbWMpNOwMHnzR8NVyBtc9XaW8LWfjFhM6ro40" />
    <!-- Foundation CSS -->
-  <link rel="stylesheet" href="vendor/foundation/css/normalize.css" />
-  <link rel="stylesheet" href="vendor/foundation/css/foundation.css" />
+  <!--<link rel="stylesheet" href="vendor/foundation/css/normalize.css" />
+  <link rel="stylesheet" href="vendor/foundation/css/foundation.css" />-->
   <link rel="stylesheet" type="text/css" href="http://cloud.github.com/downloads/lafeber/world-flags-sprite/flags16.css" />
-  <link rel="stylesheet" type="text/css" href="vendor/ngprogress/ngProgress.css" />
+  <link rel="stylesheet" href="/vendor/angular-material/angular-material.css">
+  <link rel="stylesheet" href="/vendor/angular-material/themes/blue-theme.css">
+  <!--<link rel="stylesheet" type="text/css" href="vendor/ngprogress/ngProgress.css" />-->
 
 
   <link rel="stylesheet" href="css/app.css"/>
 </head>
 <body ng-controller="AppCtrl">
+  <!-- HEADER TOOL BAR -->
+  <header>
+    <md-toolbar scroll-shrink layout="row">
+      <div class="md-toolbar-tools">
+        <md-button ng-click="toggleMenu()">Menu</md-button>
+        <h3>
+           <span class="md-flex"><span class="f16" ng-click="showAdvanced()"><span class="flag {{lang}}"></span></span>Refurbishy</span>
+        </h3>
+      </div>
+    </md-toolbar>
+  </header>
 
-  <div class="off-canvas-wrap" data-offcanvas>
-  <div class="inner-wrap">
-    <nav class="tab-bar">
-      <section class="left-small">
-        <a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
-      </section>
-
-      <section class="middle tab-bar-section">
-        <h1 class="title">Refurbishy</h1>
-      </section>
-
-      <section class="right-small">
-        <a class="right-off-canvas-toggle menu-icon" href="#"><span></span></a>
-      </section>
-    </nav>
-
-    <aside class="left-off-canvas-menu" ng-controller="LeftMenuCtrl">
-      <ul class="off-canvas-list">
-          <li><label>Filter by</label></li>
-          <li><a href="#" ng-click="onSelectItem('')">SEE ALL</a></li>
-          <li ng-repeat="device in devices | filter:searchFilter | unique:'label'" ng-model="devices"><a href="#" ng-click="onSelectItem(device.label)">{{device.label}}</a></li>
-      </ul>
-    </aside>
-
-    <aside class="right-off-canvas-menu">
-      <ul class="off-canvas-list">
-        <li><label>Select Apple Store</label></li>
-        <li><a ng-click="getDevices($event,'de')"><flag country="de" size="16"></flag> Germany</a></li>
-        <li><a ng-click="getDevices($event,'es')"><flag country="es" size="16"></flag> Spain</a></li>
-        <li><a ng-click="getDevices($event,'fr')"><flag country="fr" size="16"></flag> France</a></li>
-        <li><a ng-click="getDevices($event,'us')"><flag country="us" size="16"></flag> United States</a></li>
-      </ul>
-    </aside>
+  <!-- CONTENT -->
+  <div layout="vertical" flex>
+        <!-- LEFT SIDEBAR -->
+        <md-sidenav class="md-sidenav-left" component-id="left" md-is-locked-open="$media('min-width: 800px')">
+          <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">{{'product category'|translate}}</h1>
+          </md-toolbar>
+          <md-content ng-controller="LeftSideCtrl" class="md-padding" flex layout="vertical">
+            <!-- SIDEBAR CONTENT COMES HERE -->
+          </md-content>
+        </md-sidenav>
 
 
-    <!-- MAIN SECTION -->
-    <section class="main-section">
+      <!-- MAIN SECTION -->
+        <md-content layout="horizontal" layout-align="center">
+          <div ui-view></div>
+        </md-content>
 
-<!--         <nav class="breadcrumbs">
-        <a ui-sref="main">view1</a>
-        </nav> -->
-        <div ui-view></div>
 
-    </section>
-
-  <a class="exit-off-canvas"></a>
-
-  </div>
+        <md-tabs>
+          <md-tab ng-repeat="device in devices | filter:searchFilter | unique:'label'" ng-model="devices" ng-click="onSelectItem(device.label,$index)" label="{{device.label}}" ng-disabled="$index == selectedIndex">
+            <div class="demo-tab tab{{$index%4}}" layout="column" layout-fill layout-align="space-around center">
+            </div>
+          </md-tab>
+        </md-tabs>
 </div>
-
   <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
@@ -77,23 +67,31 @@
 
 
   <!-- Foundation JS dependencies -->
-  <script src="vendor/foundation/js/vendor/jquery.js"></script>
+  <script src="vendor/jquery/dist/jquery.min.js"></script>
+  <!--
   <script src="vendor/foundation/js/vendor/modernizr.js"></script>
-  <script src="vendor/foundation/js/foundation.min.js"></script>
+  <script src="vendor/foundation/js/foundation.min.js"></script> -->
 
   <!-- Other JS plugins can be included here -->
-  <script src="vendor/foundation/js/foundation/foundation.offcanvas.js"></script>
-
-
+  <!--<script src="vendor/foundation/js/foundation/foundation.offcanvas.js"></script>-->
 
   <!-- Angular JS dependencies -->
-  <script src="vendor/angular/angular.js"></script>
-  <script src="vendor/angular-gettext/dist/angular-gettext.min.js"></script>
-  <script src="vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
-  <script src="vendor/angular-ui-utils/ui-utils.min.js"></script>
-  <script src="vendor/underscore/underscore.js"></script>
-  <script src="vendor/ng-flags/src/directives/ng-flags.js"></script>
-  <script src="vendor/ngprogress/build/ngProgress.min.js"></script>
+  <script src="/vendor/angular/angular.js"></script>
+  <script src="/vendor/angular-aria/angular-aria.js"></script>
+  <script src="/vendor/angular-animate/angular-animate.js"></script>
+  <script src="/vendor/hammerjs/hammer.js"></script>
+  <script src="/vendor/angular-material/angular-material.js"></script>
+  <script src="/vendor/angular-gettext/dist/angular-gettext.min.js"></script>
+  <script src="/vendor/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="/vendor/angular-ui-utils/ui-utils.min.js"></script>
+  <script src="/vendor/angular-messages/angular-messages.min.js"></script>
+
+
+
+
+
+  <!--<script src="vendor/ngprogress/build/ngProgress.min.js"></script>-->
+
 
   <!-- Angular App JS-->
   <script src="dist/js/dist.js"></script>

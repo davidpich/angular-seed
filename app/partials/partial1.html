@@ -1,24 +1,41 @@
-<div class="row">
-        <form>
-                <fieldset>
-                        <legend ng-controller="TranslateTextCtrl" ng-show="(devices|filter:newFilter|filter:searchFilter).length > 0">{{(devices|filter:newFilter|filter:searchFilter).length}} {{'products'|translate}}</legend>
-                        <input  type="text" ng-model="searchFilter.$" placeholder="{{'Search for something...'|translate}}">
-                </fieldset>
-        </form>
+<div layout="column" layout-fill layout-align="center center">
+  <md-content>
+      <form>
+          <fieldset><i class="fi-heart style3"></i>
+              <legend ng-controller="TranslateTextCtrl" ng-show="(devices|filter:newFilter|filter:searchFilter).length > 0">{{(devices|filter:newFilter|filter:searchFilter).length}} {{'products'|translate}} <span ng-if="newFilter"> [{{newFilter}}]</span><a href="#" ng-if="newFilter" ng-click="onSelectItem('')"> {{'products'|translate}}</a></legend>
+              <input  type="text" ng-model="searchFilter.$" placeholder="{{'Search for something...'|translate}}">
+          </fieldset>
+      </form>
+  <md-list>
+    <md-item ng-repeat="device in devices | filter:newFilter | filter:searchFilter" ng-model="devices" ng-if="device.linkBuy">
+      <md-item-content>
+        <div class="md-tile-left">
+          <img ng-src="{{device.image}}" alt="{{device.descrip}}" class="face">
+        </div>
+        <div class="md-tile-content">
+          <h3>{{device.descrip}}</h3>
+          <h4>{{device.price}}</h4>
+          <p>
+            {{device.savings}}
+          </p>
+          <md-button ng-href="{{device.linkBuy}}" target="_blank" class="md-primary">ver producto</md-button>
+        </div>
+      </md-item-content>
+      <md-divider inset></md-divider>
+    </md-item>
+  </md-list>
+  </md-content>
+
 </div>
-
-
-    <div class="row">
-                <div class="small-6 large-2 columns product-block" ng-repeat="device in devices | filter:newFilter | filter:searchFilter" ng-model="devices">
-                        <a href="{{device.linkBuy}}" target="_blank"><img ng-src="{{device.image}}" class="thumbnail"/></a>
-                        <ul class="no-bullet">
-                                <li class="product-price">
-                                        <span class="product-price">{{device.price}}</span>
-                                        <span ng-hide="!device.savings" class="product-savings">{{device.savings}}</span>
-                                </li>
-                                <li><p><span class="product-info">{{device.descrip}}</span></p></li>
-                        </ul>
-                </div>
-</div>
-
-
+<!-- <div class="row">
+    <div class="small-6 large-2 columns product-block full-height" ng-repeat="device in devices | filter:newFilter | filter:searchFilter" ng-model="devices" ng-if="device.linkBuy" itemscope itemtype="http://schema.org/Product">
+        <a href="{{device.linkBuy}}" target="_blank" class="link-image"><img itemprop="image" ng-src="{{device.image}}" class="thumbnail"/></a>
+        <ul class="no-bullet">
+                <li class="product-price" itemscope itemtype="http://schema.org/Offer">
+                        <span itemprop="price" class="product-price">{{device.price}}</span>
+                        <span ng-hide="!device.savings" class="product-savings">{{device.savings}}</span>
+                </li>
+                <li><p><span itemprop="name" class="product-info">{{device.descrip}}</span></p></li>
+        </ul>
+    </div>
+</div> -->

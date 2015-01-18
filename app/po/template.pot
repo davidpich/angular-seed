@@ -2,15 +2,20 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
 
 #: app/partials/partial1.html
 msgid "Search for something..."
 msgstr ""
 
-#: app/partials/partial2.html
-msgid "buy our product"
+#: app/index.html
+msgid "product category"
 msgstr ""
 
 #: app/partials/partial1.html
 msgid "products"
+msgstr ""
+
+#: app/partials/dialog.tmpl.html
+msgid "select store"
 msgstr ""
